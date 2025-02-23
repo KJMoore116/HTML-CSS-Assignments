@@ -1,0 +1,39 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.store-container {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.products {
+  border: 1px solid black;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.item {
+  border: 1px dashed red;
+  text-align: center;
+  padding: 20px;
+}
+
+.cart-container {
+  border: 1px solid black;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

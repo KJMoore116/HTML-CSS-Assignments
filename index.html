@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Kyere's Easy Access Shop</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <div class="store-container">
+      <h2>Products</h2>
+
+      <section class="products">
+        <div class="item" data-product="PlayStation 5" data-price="499.99">
+          <img
+            src="https://th.bing.com/th/id/OIP.HLYVXvjdMEMipi9kSykvhAHaHH?w=169&h=180&c=7&r=0&o=5&pid=1.7"
+            alt="PlayStation 5"
+          />
+          <h4>PlayStation 5</h4>
+          <h5>$499.99</h5>
+          <button class="add-to-cart">Add to Cart</button>
+        </div>
+        <div class="item" data-product="Xbox Series X" data-price="599.99">
+          <img
+            src="https://th.bing.com/th/id/OIP.T6wC_EXi-9ccP-937kEjFgHaHa?w=161&h=180&c=7&r=0&o=5&pid=1.7"
+            alt="Xbox Series X"
+          />
+          <h4>Xbox Series X</h4>
+          <h5>$599.99</h5>
+          <button class="add-to-cart">Add to Cart</button>
+        </div>
+        <div class="item" data-product="Nintendo Switch" data-price="299.99">
+          <img
+            src="https://th.bing.com/th/id/OIP.hhA5wBM2j2jXJ0aVsyP5FwHaHa?w=173&h=180&c=7&r=0&o=5&pid=1.7"
+            alt="Nintendo Switch"
+          />
+          <h4>Nintendo Switch</h4>
+          <h5>$299.99</h5>
+          <button class="add-to-cart">Add to Cart</button>
+        </div>
+        <div class="item" data-product="Steam Deck" data-price="499.99">
+          <img
+            src="https://th.bing.com/th/id/OIF.hgQ2NWQ0pXbBU2h9F9DD5w?w=152&h=180&c=7&r=0&o=5&pid=1.7"
+            alt="Steam Deck"
+          />
+          <h4>Steam Deck</h4>
+          <h5>$499.99</h5>
+          <button class="add-to-cart">Add to Cart</button>
+        </div>
+      </section>
+
+      <h2>Shopping Cart</h2>
+      <section class="cart-container">
+        <div class="cart-items"></div>
+        <div class="cart-summary">
+          <h3>Summary</h3>
+          <p>Total Items: <span id="total-items">0</span></p>
+          <p>Total Price: $<span id="total-price">0.00</span></p>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const products = document.querySelectorAll(".item");
+        const cartItemsContainer = document.querySelector(".cart-items");
+        const cartSummaryContainer = document.querySelector(".cart-summary");
+        const totalItemsElement = document.getElementById("total-items");
+        const totalPriceElement = document.getElementById("total-price");
+
+        let cart = [];
+
+        loadCart();
+
+        products.forEach((product) => {
+          const addToCartButton = product.querySelector(".add-to-cart");
+          addToCartButton.addEventListener("click", () => addToCart(product));
+        });
+
+        function addToCart(product) {
+          const productName = product.dataset.product;
+          const productPrice = parseFloat(product.dataset.price);
+
+          const existingItem = cart.find((item) => item.name === productName);
+
+          if (existingItem) {
+            existingItem.quantity += 1;
+          } else {
+            cart.push({
+              name: productName,
+              price: productPrice,
+              quantity: 1,
+            });
+          }
+
+          updateCart();
+          saveCartToLocalStorage();
+        }
+
+        function updateCart() {
+          cartItemsContainer.innerHTML = "";
+          cart.forEach((item) => {
+            const cartItemElement = document.createElement("div");
+            cartItemElement.innerHTML = `
+              <p>${item.name} - $${item.price.toFixed(2)} x ${item.quantity}</p>
+              <button class="remove-from-cart" data-product="${
+                item.name
+              }">Remove</button>
+            `;
+            cartItemsContainer.appendChild(cartItemElement);
+
+            const removeButton =
+              cartItemElement.querySelector(".remove-from-cart");
+            removeButton.addEventListener("click", () =>
+              removeFromCart(item.name)
+            );
+          });
+
+          updateSummary();
+        }
+
+        function updateSummary() {
+          const totalItems = cart.reduce(
+            (total, item) => total + item.quantity,
+            0
+          );
+          const totalPrice = cart.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0
+          );
+
+          totalItemsElement.textContent = totalItems;
+          totalPriceElement.textContent = totalPrice.toFixed(2);
+        }
+
+        function removeFromCart(productName) {
+          cart = cart.filter((item) => item.name !== productName);
+          updateCart();
+          saveCartToLocalStorage();
+        }
+
+        function loadCart() {
+          const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+          cart = savedCart;
+          updateCart();
+        }
+
+        function saveCartToLocalStorage() {
+          localStorage.setItem("cart", JSON.stringify(cart));
+        }
+      });
+    </script>
+  </body>
+</html>
